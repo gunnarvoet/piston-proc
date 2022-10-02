@@ -1,0 +1,25 @@
+name: piston-proc-adcp
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - mercurial
+  - matplotlib
+  - netcdf4
+  - numpy
+  - pandas
+  - gsw
+  - scipy
+  - tqdm
+  - xarray
+  - cftime
+  - nc-time-axis
+  - requests
+  - statsmodels
+  - pip
+  - pip:
+    - velosearaptor
+    - openpyxl
+    - hg+https://currents.soest.hawaii.edu/hgstage/pycurrents@333d57320873
+    - "-e /Users/gunnar/Projects/python/gvpy"
+    # - "-e git+https://github.com/gunnarvoet/gvpy.git@master#egg=gvpy"
