@@ -1,2 +1,4 @@
 [datalad "dataset"]
 	id = f345d45d-2a5a-46a0-8e45-c5dbf69d9cfe
+[datalad "get"]
+    subdataset-source-candidate-origin = "ria+ssh://kipapa.ucsd.edu:/Volumes/Ahua/group_storage/Gunnar/ria-store/#{id}"
