@@ -5,5 +5,5 @@
 	datalad-url = https://github.com/gunnarvoet/piston-raw-mooring-data
 [submodule "data/proc"]
 	path = data/proc
-	url = ./data/proc
+	url = https://github.com/gunnarvoet/piston-mooring-data
 	datalad-id = b61af7c1-09ea-4225-a503-fe4cb5ef1bdb
