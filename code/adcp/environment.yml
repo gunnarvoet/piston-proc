@@ -18,8 +18,9 @@ dependencies:
   - statsmodels
   - pip
   - pip:
-    - velosearaptor
     - openpyxl
     - hg+https://currents.soest.hawaii.edu/hgstage/pycurrents@333d57320873
     - "-e /Users/gunnar/Projects/python/gvpy"
+    - "-e /Users/gunnar/Projects/python/velosearaptor"
+    # - velosearaptor
     # - "-e git+https://github.com/gunnarvoet/gvpy.git@master#egg=gvpy"
