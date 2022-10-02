@@ -1,0 +1,5 @@
+[submodule "data/raw"]
+	path = data/raw
+	url = https://github.com/gunnarvoet/piston-raw-mooring-data
+	datalad-id = 8911b13a-7860-4d69-90ea-31e3d5417ec0
+	datalad-url = https://github.com/gunnarvoet/piston-raw-mooring-data
