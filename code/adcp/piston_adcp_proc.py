@@ -7,14 +7,20 @@ import matplotlib as mpl
 import numpy as np
 import xarray as xr
 from pathlib import Path
+import velosearaptor
+import munch
 
 
 def add_standard_meta_data(ds):
-    for k, v in STD_META.items():
-        ds.attrs[k] = v
-    ds.attrs["start_time"] = np.datetime_as_string(ds.time.isel(time=0).data, 'm')
-    ds.attrs["stop_time"] = np.datetime_as_string(ds.time.isel(time=-1).data, 'm')
-
+    ds.attrs["time_coverage_start"] = np.datetime_as_string(
+        ds.time.isel(time=0).data, "m"
+    )
+    ds.attrs["time_coverage_end"] = np.datetime_as_string(
+        ds.time.isel(time=-1).data, "m"
+    )
+    for mm in ["min", "max"]:
+        ds.attrs[f"geospatial_lon_{mm}"] = f"{ds.attrs['lon']}"
+        ds.attrs[f"geospatial_lat_{mm}"] = f"{ds.attrs['lat']}"
     return ds
 
 
@@ -27,30 +33,60 @@ def mooring_location(mooring_nr):
         return 15.7612, 134.6883
 
 
-def adjust_variable_names(ds):
-    ds = ds.rename(z='depth')
-    return ds
+def process(
+    mooring,
+    sn,
+    min_pressure=20,
+    apply_pg=True,
+    interpolate_bin=None,
+    start=None,
+    stop=None,
+):
+    # params = velosearaptor.io.parse_yaml_input(
+    #     "parameters.yml", mooring=mooring, sn=sn, return_dict=True
+    # )
+    # p = munch.munchify(params)
 
-STD_META = dict(
-    title="PISTON 2018-2019 moored velocity time series",
-    project="PISTON, Propagation of Intraseasonal Summer Tropical Oscillations",
-    funding="Office of Naval Research",
-    version="R0",
-    institution="Scripps Institution of Oceanography, SIO",
-    author="Matthew Alford & Gunnar Voet",
-    author_email="gvoet@ucsd.edu",
-    procesing_level="Level 1",
-    license="These data may be used freely with acknowledgement to Matthew Alford & Gunnar Voet, SIO",
-    netcdf_convention="Classic",
-    platform_type="moorings",
-    instrument="ADCP",
-    # featureType=
-    #     profile
-    # cdm_data_type=
-    #     Profile
-    sea_name="Pacific",
-    keywords_vocabulary="NASA Global Change Master Directory (GCMD) Science Keywords",
-    standard_name_vocabulary="NetCDF Climate and Forecast (CF) Metadata Convention",
-    geospatial_lat_units="degree_north",
-    geospatial_lon_units="degree_east",
-)
+    # # Set up a processing object. We will take care of the editing parameters in a little bit.
+    # a = velosearaptor.madcp.ProcessADCP(
+    #     p.data_dir,
+    #     meta_data=p.meta_data,
+    #     driftparams=p.driftparams,
+    #     tgridparams=p.tgridparams,
+    #     dgridparams=p.dgridparams,
+    #     editparams=p.editparams,
+    #     verbose=False,
+    # )
+    yaml_parameter_file = Path("./parameters.yml")
+    a = velosearaptor.madcp.ProcessADCPyml(yaml_parameter_file, mooring, sn)
+
+    # Run the burst averaging
+    a.burst_average_ensembles(interpolate_bin=interpolate_bin, start=start, stop=stop)
+
+    # # Apply percent good criterion
+    # if apply_pg:
+    #     vars2d = ["u", "v", "w", "e", "u_std", "v_std", "w_std", "e_std", "amp", "pg"]
+    #     for var in vars2d:
+    #         a.ds[var] = a.ds[var].where(a.ds.pg >= p.editparams.pg_limit, other=np.nan)
+
+    # Get rid of surface stuff
+    ds = a.ds.where(a.ds.pressure > min_pressure, drop=True)
+
+    # Get rid of depth levels that have no data
+    ds = ds.dropna(dim="depth", how="all")
+
+    ds = add_standard_meta_data(ds)
+
+    # fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(7.5, 3),
+    #                     constrained_layout=True)
+    # ds.xducer_depth.plot(ax=ax, color="0.2")
+    # ds.u.plot(ax=ax)
+    # # ax.invert_yaxis()
+    # ylim = np.min(ax.get_ylim(), 0)
+    # ax.set(ylim=(800, 100))
+    # gv.plot.concise_date(ax)
+
+    raw = a.raw.sel(time=slice(ds.time[0], ds.time[-1]))
+    # velosearaptor.adcp.plot_raw_adcp_auxillary(raw)
+    # velosearaptor.adcp.plot_raw_adcp(raw)
+    return a, raw, ds

@@ -16,6 +16,7 @@ dependencies:
   - nc-time-axis
   - requests
   - statsmodels
+  - pyyaml
   - pip
   - pip:
     - openpyxl

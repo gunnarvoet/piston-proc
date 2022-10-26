@@ -1,0 +1,109 @@
+# Project-wide meta-data
+meta_data:
+  project: PISTON
+  summary: ""
+  keywords: "EARTH SCIENCE >OCEANS >OCEAN CIRCULATION >OCEAN CURRENTS >CURRENT PROFILES"
+  keywords_vocabulary: "GCMD Science Keywords"
+  Conventions: "CF-1.10"
+  institution: "Scripps Institution of Oceanography, SIO"
+  project: "PISTON, Propagation of Intraseasonal Summer Tropical Oscillations"
+  data_mode: "D"
+  funding: "Office of Naval Research"
+  version: "R0"
+  principal_investigator: "Matthew Alford"
+  principal_investigator_email: "malford@ucsd.edu"
+  creator_name: "Gunnar Voet"
+  creator_email: "gvoet@ucsd.edu"
+  creator_url: "gunnarvoet.github.io"
+  creator_id: "https://orcid.org/0000-0003-1975-186X"
+  creator_type: "person"
+  creator_institution: "Scripps Institution of Oceanography, SIO"
+  procesing_level: "Level 1"
+  license: "These data may be used freely with acknowledgement to Matthew Alford & Gunnar Voet, SIO"
+  naming_authority: "OceanSITES"
+  source: "subsurface mooring"
+  platform_type: "moored"
+  instrument: "ADCP"
+  featureType: "timeSeriesProfile"
+  cdm_data_type: "Station"
+  sea_name: "Northwest Pacific Ocean"
+  standard_name_vocabulary: "NetCDF Climate and Forecast (CF) Metadata Convention"
+  geospatial_lat_units: "degree_north"
+  geospatial_lon_units: "degree_east"
+  geospatial_vertical_units: "meter"
+  geospatial_vertical_positive: "down"
+  data_type: "time-series data"
+
+# Project-wide processing parameters
+processing_parameters:
+  tgridparams:
+    burst_average: True
+  dgridparams:
+  editparams:
+    min_correlation: 40
+    max_e: 0.2
+    max_e_deviation: 2
+    pg_limit: 40
+
+# Mooring- and instrument-specific parameters
+mooring:
+  SIO2:
+    lon: 134.6899
+    lat: 15.7632
+    SN14435:
+      driftparams:
+        end_adcp: [2018, 9, 21, 23, 50, 28]
+        end_pc:   [2018, 9, 21, 23, 49, 13]
+      data_dir: ../../data/raw/adcp/SIO2/SN14435/
+      editparams:
+        maskbins: []
+    SN13596:
+      driftparams:
+        end_adcp: [2018, 9, 22, 19, 11, 0]
+        end_pc:   [2018, 9, 22, 19, 10, 0]
+      data_dir: ../../data/raw/adcp/SIO2/SN13596/
+      editparams:
+        maskbins: []
+    SN22525:
+      driftparams:
+        end_adcp: [2018,    9, 22,    1,   57,   0]
+        end_pc:   [2018,    9,   22,    1,   57,   39]
+      data_dir: ../../data/raw/adcp/SIO2/SN22525/
+      editparams:
+        maskbins: [18]
+        pg_limit: 40
+        min_correlation: 20
+  SIO3:
+    lon: 134.6899
+    lat: 15.7632
+    SN13596:
+      driftparams:
+        end_adcp: [2019,    10,   8,    21,   10,   4]
+        end_pc:   [2019,    10,   8,    21,   7,   0]
+      data_dir: ../../data/raw/adcp/SIO3/SN13596/
+    editparams:
+      pg_limit: 40
+      min_correlation: 64
+
+
+  # Instrument-specific parameters overview
+    #SNxxxx:
+    #  data_dir:
+    #  driftparams:
+    #    end_adcp:
+    #    end_pc:
+    #  editparams:
+    #    maskbins:
+    #    max_e:
+    #    max_e_deviation:
+    #    min_correlation:
+    #    pg_limit:
+    #  dgridparams:
+    #    dtop:
+    #    dbot:
+    #    d_interval:
+    #  tgridparams:
+    #    dt_hours:
+    #    t0:
+    #    t1:
+    #    burst_average:
