@@ -19,6 +19,7 @@ dependencies:
   - pyyaml
   - pip
   - pip:
+    - datalad-osf
     - openpyxl
     - hg+https://currents.soest.hawaii.edu/hgstage/pycurrents@333d57320873
     - "-e /Users/gunnar/Projects/python/gvpy"
