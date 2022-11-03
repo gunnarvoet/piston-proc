@@ -42,24 +42,42 @@ import piston_adcp_proc as pp
 yml_parameters = Path("./parameters.yml")
 
 # %% [markdown]
+# ## SIO1
+
+# %% [markdown]
+# ### SN3160
+
+# %%
+a, ds = pp.process("SIO1", 3160)
+
+# %%
+raw = pp.return_raw(a)
+
+# %%
+raw = raw.where(raw.pressure > 150, drop=True)
+
+# %%
+velosearaptor.adcp.plot_raw_adcp(raw.isel(time=range(11000, 15000)))
+
+# %% [markdown]
 # ## SIO2
 
-# %% [markdown] heading_collapsed=true
+# %% [markdown]
 # ### SN14435
 
-# %% hidden=true
+# %%
 params = velosearaptor.io.parse_yaml_input(yml_parameters, mooring="SIO2", sn=14435)
 
-# %% hidden=true
+# %%
 p = munch.munchify(params)
 
-# %% hidden=true
+# %%
 p.editparams
 
-# %% [markdown] hidden=true
+# %% [markdown]
 # Set up a processing object.
 
-# %% hidden=true
+# %%
 a = velosearaptor.madcp.ProcessADCPyml(
     yml_parameters,
     mooring="SIO2",
@@ -67,69 +85,60 @@ a = velosearaptor.madcp.ProcessADCPyml(
     verbose=False,
 )
 
-# %% [markdown] hidden=true
+# %% [markdown]
 # Run the burst averaging
 
-# %% hidden=true
+# %%
 a.burst_average_ensembles()
 
-# %% hidden=true
-a.ds.xducer_depth
-
-# %% hidden=true
+# %%
 a.ds.amp.gv.tplot()
 
-# %% hidden=true
+# %%
 a.ds.pg.gv.tplot()
 
-# %% hidden=true
-a.ds.where(a.ds.pressure>15).dropna(dim='depth', how="all").dropna(dim='time', how="all").u.plot(yincrease=False)
+# %%
+a.ds.where(a.ds.pressure>20).dropna(dim='depth', how="all").dropna(dim='time', how="all").u.plot(yincrease=False)
 
-# %% hidden=true
+# %%
 a.ds.where(a.ds.pressure>15).dropna(dim='depth', how="all").dropna(dim='time', how="all").pg.plot(yincrease=False)
 
-# %% hidden=true
-a.ds.where(a.ds.pressure>15).dropna(dim='z', how="all").dropna(dim='time', how="all").amp.plot(yincrease=False)
+# %%
+a.ds.where(a.ds.pressure>15).dropna(dim='depth', how="all").dropna(dim='time', how="all").amp.plot(yincrease=False)
 
-# %% [markdown] hidden=true
+# %% [markdown]
 # Get rid of surface stuff
 
-# %% hidden=true
+# %%
 ds = a.ds.where(a.ds.pressure > 15, drop=True)
 
-# %% [markdown] hidden=true
+# %% [markdown]
 # Get rid of depth levels that have no data
 
-# %% hidden=true
-ds = ds.dropna(dim="z", how="all")
+# %%
+ds = ds.dropna(dim="depth", how="all")
 
-# %% hidden=true
+# %%
 ds.amp.gv.tplot()
 
-# %% hidden=true
+# %%
 ds.w.gv.tplot()
 
-# %% hidden=true
+# %%
 ds.u.gv.tplot()
 
-# %% hidden=true
+# %%
 fig, ax = gv.plot.quickfig(fgs=(7, 3))
 ds.pressure.plot(yincrease=False, ax=ax)
 gv.plot.concise_date(ax)
 
-# %% hidden=true
-ds
-
-# %% hidden=true
+# %%
 ds.u_error.gv.tplot()
 
-# %% hidden=true
-ds = pp.adjust_variable_names(ds)
-
-# %% hidden=true
+# %%
 ds = pp.add_standard_meta_data(ds)
 
-# %% hidden=true
+# %%
 fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(7.5, 3),
                        constrained_layout=True)
 ds.xducer_depth.plot(ax=ax, color="0.2")
@@ -139,40 +148,31 @@ ylim = np.min(ax.get_ylim(), 0)
 ax.set(ylim=(800, 100))
 gv.plot.concise_date(ax)
 
-# %% hidden=true
-ds.u_error.gv.tplot()
-
-# %% hidden=true
+# %%
 raw = a.raw.sel(time=slice(ds.time[0], ds.time[-1]))
 
-# %% hidden=true
+# %%
 velosearaptor.adcp.plot_raw_adcp_auxillary(raw)
 
-# %% hidden=true
+# %%
 velosearaptor.adcp.plot_raw_adcp(raw)
 
-# %% hidden=true
-a, raw, ds = pp.process("SIO2", 14435)
+# %%
+a, ds = pp.process("SIO2", 14435)
 
-# %% hidden=true
-velosearaptor.adcp.plot_raw_adcp_auxillary(raw)
-
-# %% hidden=true
-velosearaptor.adcp.plot_raw_adcp(raw)
-
-# %% [markdown] hidden=true
+# %% [markdown]
 # Shear looks decent now
 
-# %% hidden=true
+# %%
 ds.u.differentiate(coord='depth').gv.tplot(robust=False, cmap='RdBu')
 
-# %% hidden=true
-ds.u.differentiate(coord='depth').gv.tplot(robust=False, cmap='RdBu')
-
-# %% hidden=true
+# %%
 ds.v.differentiate(coord='depth').gv.tplot(robust=False, cmap='RdBu')
 
-# %% hidden=true
+# %%
+ds.v.differentiate(coord='depth').gv.tplot(robust=False, cmap='RdBu')
+
+# %%
 ds.v.gv.tplot()
 
 # %% [markdown] heading_collapsed=true
@@ -263,3 +263,69 @@ a.ds.u.gv.tplot(robust=True)
 a.ds.pg.gv.tplot(robust=True)
 
 # %% hidden=true
+
+# %% [markdown] heading_collapsed=true
+# ### SN14435
+
+# %% hidden=true
+a, ds = pp.process("SIO3", 14435, min_pressure=30, start=200, stop=2500)
+
+# %% hidden=true
+ds.u.isel(time=range(30)).gv.tplot()
+
+# %% [markdown]
+# ### SN22525
+
+# %%
+a, ds = pp.process("SIO3", 22525, min_pressure=50)
+
+# %%
+fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(7.5, 3),
+                       constrained_layout=True)
+ds.xducer_depth.plot(ax=ax, color="0.2", linewidth=0.3)
+ds.u.plot(ax=ax, robust=True)
+# ax.invert_yaxis()
+ylim = np.min(ax.get_ylim(), 0)
+ax.set(ylim=(200, 0))
+gv.plot.concise_date(ax)
+
+# %%
+fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(7.5, 3),
+                       constrained_layout=True)
+ts = slice("2019-07-01", "2019-09-01")
+ds.xducer_depth.sel(time=ts).plot(ax=ax, color="0.2", linewidth=0.3)
+ds.u.sel(time=ts).plot(ax=ax, robust=True)
+# ax.invert_yaxis()
+ylim = np.min(ax.get_ylim(), 0)
+ax.set(ylim=(200, 0))
+gv.plot.concise_date(ax)
+
+# %%
+gv.plot.font_sue_ellen()
+
+# %%
+fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(7.5, 3),
+                       constrained_layout=True)
+gv.plot.axstyle(ax)
+ts = slice("2019-07-11", "2019-07-25")
+ds.xducer_depth.sel(time=ts).plot(ax=ax, color="0.2", linewidth=0.3)
+ds.u.sel(time=ts).interpolate_na(dim="depth", limit=3, use_coordinate=False).plot(ax=ax, robust=True)
+# ax.invert_yaxis()
+ylim = np.min(ax.get_ylim(), 0)
+ax.set(ylim=(200, 0), title="WH300 Example")
+gv.plot.concise_date(ax)
+
+# %%
+fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(7.5, 3),
+                       constrained_layout=True)
+ds.xducer_depth.plot(ax=ax, color="0.2")
+ds.v.plot(ax=ax)
+# ax.invert_yaxis()
+ylim = np.min(ax.get_ylim(), 0)
+ax.set(ylim=(150, 0))
+gv.plot.concise_date(ax)
+
+# %%
+ds
+
+# %%
