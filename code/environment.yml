@@ -1,4 +1,4 @@
-name: piston-proc-adcp
+name: piston-proc
 channels:
   - conda-forge
 dependencies:
